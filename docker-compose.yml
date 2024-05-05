@@ -1,0 +1,32 @@
+version: '3'
+services:
+  postgres:
+    image: airflow-postgres-v3
+    container_name: airflow-postgres
+    environment:
+      POSTGRES_DB: airflow
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+
+  airflow:
+    image: airflow-webserver-v3
+    container_name: airflow-webserver
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      AIRFLOW_DATABASE_URL: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    ports:
+      - "8080:8080"
+    command: webserver
+    volumes:
+      - /home/hadoop1/airflow/share:/opt/airflow/share
+
+  mongo:
+    image: airflow-mongo-v3
+    container_name: airflow-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - /home/hadoop1/airflow/share:/data/db
